@@ -3,7 +3,7 @@ function setRoutes(app) {
     const controller = new Controller();
 
 
-    app.get('/ux/desuka/music', controller.sendMail);
+    app.get('/ux/desuka/music', controller.getMusic);
 /*     app.post('/ux/desuka/music', controller.createMusic);
     app.put('/ux/desuka/music/:id', controller.updateMusic);
     app.delete('/ux/desuka/music/:id', controller.deleteMusic); */

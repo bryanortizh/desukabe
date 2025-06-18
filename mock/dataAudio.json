@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "title": "Song One",
+        "artist": "Artist A",
+        "album": "Album X",
+        "duration": "3:45",
+        "genre": "Pop",
+        "coverImage": "http://localhost:3000/assets/images/bg_lofi1.jpg",
+        "audioFile": "http://localhost:3000/assets/music/CLOUDY.mp3"
+    },
+    {
+        "id": 2,
+        "title": "Song Two",
+        "artist": "Artist B",
+        "album": "Album Y",
+        "duration": "4:20",
+        "genre": "Rock",
+        "coverImage": "http://localhost:3000/assets/images/bg_lofi2.jpg",
+        "audioFile": "http://localhost:3000/assets/music/Faithful Mission.mp3"
+    },
+    {
+        "id": 3,
+        "title": "Song Three",
+        "artist": "Artist C",
+        "album": "Album Z",
+        "duration": "5:10",
+        "genre": "Jazz",
+        "coverImage": "http://localhost:3000/assets/images/bg_lofi1.jpg",
+        "audioFile": "http://localhost:3000/assets/music/Glitch-Fi - Voossi.mp3"
+    }
+]
