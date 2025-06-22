@@ -1,5 +1,4 @@
 const swaggerJsdoc = require('swagger-jsdoc');
-
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
@@ -8,8 +7,14 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'Documentación de la API de Desuka',
     },
+    servers: [
+      {
+        url: 'http://localhost:3000',
+        description: 'Servidor local'
+      }
+    ]
   },
-  apis: ['./src/routes/*.js'], // Ajusta la ruta según donde estén tus rutas
+apis: ['./src/routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);

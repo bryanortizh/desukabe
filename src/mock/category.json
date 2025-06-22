@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "name": "Lo-Fi Beats",
+    "description": "A collection of relaxing lo-fi beats for studying and chilling.",
+    "image": "http://localhost:3000/assets/images/category_1.png",
+    "audioFiles": [
+      {
+        "id": 1,
+        "title": "Chill Vibes",
+        "artist": "DJ Relax",
+        "album": "Lo-Fi Chill",
+        "duration": "3:30",
+        "genre": "Lo-Fi",
+        "coverImage": "http://localhost:3000/assets/images/lofi1.jpg",
+        "audioFile": "http://localhost:3000/assets/music/Monma, Misha - Spiral.mp3"
+      },
+      {
+        "id": 2,
+        "title": "Study Session",
+        "artist": "Beats Master",
+        "album": "Focus Beats",
+        "duration": "4:00",
+        "genre": "Lo-Fi",
+        "coverImage": "http://localhost:3000/assets/images/lofi2.jpg",
+        "audioFile": "http://localhost:3000/assets/music/NO.mp3"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Chill Vibes",
+    "description": "A collection of chill music for relaxation and unwinding.",
+    "image": "http://localhost:3000/assets/images/category_2.png",
+    "audioFiles": [
+      {
+        "id": 3,
+        "title": "Evening Breeze",
+        "artist": "Calm Waves",
+        "album": "Chillout Essentials",
+        "duration": "4:15",
+        "genre": "Chill",
+        "coverImage": "http://localhost:3000/assets/images/chill1.jpg",
+        "audioFile": "http://localhost:3000/assets/music/kuromaru x hereafter - laxin.mp3"
+      },
+      {
+        "id": 4,
+        "title": "Night Lights",
+        "artist": "Smooth Sounds",
+        "album": "Relaxing Nights",
+        "duration": "5:00",
+        "genre": "Chill",
+        "coverImage": "http://localhost:3000/assets/images/chill2.jpg",
+        "audioFile": "http://localhost:3000/assets/music/KUROMARU - PREDICTIONS.mp3"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Ambient Sounds",
+    "description": "A collection of ambient sounds for meditation and relaxation.",
+    "image": "http://localhost:3000/assets/images/category_3.png",
+    "audioFiles": [
+      {
+        "id": 5,
+        "title": "Forest Whisper",
+        "artist": "Nature Sounds",
+        "album": "Ambient Nature",
+        "duration": "6:00",
+        "genre": "Ambient",
+        "coverImage": "http://localhost:3000/assets/images/ambient1.jpg",
+        "audioFile": "http://localhost:3000/assets/music/Monma, Misha - Spiral.mp3"
+      },
+      {
+        "id": 6,
+        "title": "Ocean Waves",
+        "artist": "Sea Breeze",
+        "album": "Oceanic Calm",
+        "duration": "7:30",
+        "genre": "Ambient",
+        "coverImage": "http://localhost:3000/assets/images/ambient2.jpg",
+        "audioFile": "http://localhost:3000/assets/music/NO.mp3"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Jazz Classics",
+    "description": "A collection of classic jazz tracks for enthusiasts.",
+    "image": "http://localhost:3000/assets/images/category_4.png",
+    "audioFiles": [
+      {
+        "id": 7,
+        "title": "Smooth Jazz",
+        "artist": "Jazz Legends",
+        "album": "Classic Jazz",
+        "duration": "5:45",
+        "genre": "Jazz",
+        "coverImage": "http://localhost:3000/assets/images/jazz1.jpg",
+        "audioFile": "http://localhost:3000/assets/music/kuromaru x hereafter - laxin.mp3"
+      },
+      {
+        "id": 8,
+        "title": "Evening Jazz",
+        "artist": "Night Jazz",
+        "album": "Jazz Nights",
+        "duration": "6:20",
+        "genre": "Jazz",
+        "coverImage": "http://localhost:3000/assets/images/jazz2.jpg",
+        "audioFile": "http://localhost:3000/assets/music/KUROMARU - PREDICTIONS.mp3"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Classical Melodies",
+    "description": "A collection of timeless classical music pieces.",
+    "image": "http://localhost:3000/assets/images/category_5.png",
+    "audioFiles": [
+      {
+        "id": 9,
+        "title": "Symphony No. 5",
+        "artist": "Beethoven",
+        "album": "Classical Masterpieces",
+        "duration": "7:15",
+        "genre": "Classical",
+        "coverImage": "http://localhost:3000/assets/images/classical1.jpg",
+        "audioFile": "http://localhost:3000/assets/music/Monma, Misha - Spiral.mp3"
+      },
+      {
+        "id": 10,
+        "title": "Clair de Lune",
+        "artist": "Debussy",
+        "album": "Piano Classics",
+        "duration": "5:30",
+        "genre": "Classical",
+        "coverImage": "http://localhost:3000/assets/images/classical2.jpg",
+        "audioFile": "http://localhost:3000/assets/music/NO.mp3"
+      }
+    ]
+  }
+]

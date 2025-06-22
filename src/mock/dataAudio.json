@@ -26,7 +26,7 @@
         "album": "Album Z",
         "duration": "5:10",
         "genre": "Jazz",
-        "coverImage": "http://localhost:3000/assets/images/bg_lofi1.jpg",
+        "coverImage": "http://localhost:3000/assets/images/bg_lofi3.jpg",
         "audioFile": "http://localhost:3000/assets/music/Glitch-Fi - Voossi.mp3"
     }
 ]
