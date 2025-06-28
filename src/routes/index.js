@@ -1,5 +1,7 @@
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../contract/apiDesuka");
+const authenticateToken = require("../function/validateJWT");
+
 const { Controller } = require("../controllers/index");
 const controller = new Controller();
 
@@ -47,7 +49,7 @@ function setRoutes(app) {
    *                   audioFile:
    *                     type: string
    */
-  app.get("/ux-mobile/desuka/music", controller.getMusic);
+  app.get("/ux-mobile/desuka/music", authenticateToken, controller.getMusic);
 
   /**
    * @swagger
@@ -75,8 +77,12 @@ function setRoutes(app) {
    *                   isLike:
    *                     type: boolean
    */
-  app.get("/ux-mobile/desuka/musicLike/:idMusic", controller.getMusicLike);
- 
+  app.get(
+    "/ux-mobile/desuka/musicLike/:idMusic",
+    authenticateToken,
+    controller.getMusicLike
+  );
+
   /**
    * @swagger
    * /ux-mobile/desuka/categoryMusic:
@@ -103,7 +109,11 @@ function setRoutes(app) {
    *                   audioFiles:
    *                    type: array
    */
-  app.get("/ux-mobile/desuka/categoryMusic", controller.getCategoryMusic);
+  app.get(
+    "/ux-mobile/desuka/categoryMusic",
+    authenticateToken,
+    controller.getCategoryMusic
+  );
 
   /**
    * @swagger
@@ -131,9 +141,95 @@ function setRoutes(app) {
    *                   isLike:
    *                     type: boolean
    */
-  app.put("/ux-mobile/desuka/musicLike/:idMusic", controller.changeMusicLike);
+  app.put(
+    "/ux-mobile/desuka/musicLike/:idMusic",
+    authenticateToken,
+    controller.changeMusicLike
+  );
+
+  /**
+   * @swagger
+   * /ux-mobile/desuka/logout:
+   *   post:
+   *     summary: Cierra la sesión del usuario y elimina el token
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               userId:
+   *                 type: integer
+   *                 description: ID del usuario
+   *             required:
+   *               - userId
+   *     responses:
+   *       200:
+   *         description: Logout exitoso, token eliminado
+   *       400:
+   *         description: El userId es requerido
+   *       401:
+   *         description: Token no proporcionado o inválido
+   *       404:
+   *         description: No se encontró token para ese usuario
+   */
+  app.post(
+    "/ux-mobile/desuka/logout",
+    authenticateToken,
+    controller.logoutUser
+  );
+
+  /**
+   * @swagger
+   * /ux-mobile/desuka/login:
+   *   post:
+   *     summary: Inicia sesión de usuario y retorna un token JWT
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             oneOf:
+   *               - required: [uuid, type_register]
+   *                 properties:
+   *                   uuid:
+   *                     type: string
+   *                     description: UUID del usuario (para registro tipo 1)
+   *                   type_register:
+   *                     type: integer
+   *                     enum: [1]
+   *                     description: Tipo de registro (1 = UUID)
+   *               - required: [email, password, type_register]
+   *                 properties:
+   *                   email:
+   *                     type: string
+   *                     description: Correo electrónico del usuario (para registro tipo 2)
+   *                   password:
+   *                     type: string
+   *                     description: Contraseña del usuario
+   *                   type_register:
+   *                     type: integer
+   *                     enum: [2]
+   *                     description: Tipo de registro (2 = email/password)
+   *     responses:
+   *       200:
+   *         description: Login exitoso, retorna token y datos del usuario
+   *       400:
+   *         description: Faltan parámetros requeridos o datos inválidos
+   *       401:
+   *         description: Credenciales incorrectas
+   *       404:
+   *         description: Usuario no encontrado
+   */
+  app.post("/ux-mobile/desuka/login", controller.loginUser);
 
   app.post("/ux-mobile/desuka/register", controller.registerUser);
+
+  app.post("/ux-mobile/desuka/verify", controller.verifyUserToken);
 }
 
 module.exports = setRoutes;

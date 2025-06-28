@@ -6,4 +6,11 @@ async function encryptPassword(plainPassword) {
     return hash;
 }
 
-module.exports = encryptPassword;
+async function comparePassword(plainPassword, hash) {
+    return await bcrypt.compare(plainPassword, hash);
+}
+
+module.exports = {
+    encryptPassword,
+    comparePassword
+};
