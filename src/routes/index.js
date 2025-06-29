@@ -1,9 +1,12 @@
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../contract/apiDesuka");
 const authenticateToken = require("../function/validateJWT");
-
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 const { Controller } = require("../controllers/index");
+const { ControllerAudio } = require("../controllers/audio");
 const controller = new Controller();
+const controllerAudio = new ControllerAudio();
 
 function setRoutes(app) {
   /**
@@ -49,7 +52,11 @@ function setRoutes(app) {
    *                   audioFile:
    *                     type: string
    */
-  app.get("/ux-mobile/desuka/music", authenticateToken, controller.getMusic);
+  app.get(
+    "/ux-mobile/desuka/music",
+    authenticateToken,
+    controllerAudio.getMusic
+  );
 
   /**
    * @swagger
@@ -80,7 +87,7 @@ function setRoutes(app) {
   app.get(
     "/ux-mobile/desuka/musicLike/:idMusic",
     authenticateToken,
-    controller.getMusicLike
+    controllerAudio.getMusicLike
   );
 
   /**
@@ -112,7 +119,7 @@ function setRoutes(app) {
   app.get(
     "/ux-mobile/desuka/categoryMusic",
     authenticateToken,
-    controller.getCategoryMusic
+    controllerAudio.getCategoryMusic
   );
 
   /**
@@ -144,7 +151,7 @@ function setRoutes(app) {
   app.put(
     "/ux-mobile/desuka/musicLike/:idMusic",
     authenticateToken,
-    controller.changeMusicLike
+    controllerAudio.changeMusicLike
   );
 
   /**
@@ -230,6 +237,16 @@ function setRoutes(app) {
   app.post("/ux-mobile/desuka/register", controller.registerUser);
 
   app.post("/ux-mobile/desuka/verify", controller.verifyUserToken);
+
+  app.post(
+    "/ux-mobile/desuka/music/create",
+    upload.fields([
+      { name: "audioFile", maxCount: 1 },
+      { name: "coverImage", maxCount: 1 },
+    ]),
+    authenticateToken,
+    controllerAudio.uploadMusic
+  );
 }
 
 module.exports = setRoutes;

@@ -11,6 +11,13 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use("/assets", express.static(path.join(__dirname, "./assets")));
+app.use('/uploads', (req, res, next) => {
+  // Quita la extensión y busca el archivo real sin extensión
+  const filePath = path.resolve(__dirname, '../uploads', path.basename(req.path, path.extname(req.path)));
+  res.sendFile(filePath, err => {
+    if (err) next();
+  });
+});
 setRoutes(app);
 
 app.listen(PORT, () => {

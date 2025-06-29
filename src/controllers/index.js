@@ -1,7 +1,4 @@
 require("dotenv").config();
-const music = require("../mock/dataAudio.json");
-const isLikeMusic = require("../mock/isLikeMusic.json");
-const categoryMusic = require("../mock/category.json");
 const pool = require("../database/conection.js");
 const jwt = require("jsonwebtoken");
 const encryptPassword = require("../function/passwordhash.js");
@@ -9,55 +6,6 @@ const registerUserForm = require("../errors/registerUser.js");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 class Controller {
-  getMusic(req, res) {
-    try {
-      res.status(200).json(music);
-    } catch (error) {
-      return res.status(500).json({
-        message: "Error al verificar usuario/token",
-        error: error.message,
-        errorCode: "UNKREG01",
-      });
-    }
-  }
-
-  getMusicLike(req, res) {
-    const id = req.params.idMusic;
-    const musicLike = isLikeMusic;
-    if (id === ":idMusic") {
-      return res
-        .status(400)
-        .json({ message: "El id de la música es requerido" });
-    }
-
-    if (musicLike.idMusic === Number(id)) {
-      res.status(200).json(musicLike);
-    } else {
-      res
-        .status(404)
-        .json({ message: "No se ha encontrado la musica solicitada" });
-    }
-  }
-
-  changeMusicLike(req, res) {
-    const id = req.params.idMusic;
-    const musicLike = isLikeMusic;
-    if (id === ":idMusic") {
-      return res
-        .status(400)
-        .json({ message: "El id de la música es requerido" });
-    }
-
-    if (musicLike.idMusic === Number(id)) {
-      musicLike.isLike = !musicLike.isLike;
-      res.status(200).json(musicLike);
-    } else {
-      res
-        .status(404)
-        .json({ message: "No se ha encontrado la musica solicitada" });
-    }
-  }
-
   async registerUser(req, res) {
     const { nickname, email, password, uuid, type_register, type_user } =
       req.body;
@@ -264,9 +212,6 @@ class Controller {
     }
   }
 
-  getCategoryMusic(req, res) {
-    res.status(200).json(categoryMusic);
-  }
 }
 
 module.exports = { Controller };
