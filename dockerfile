@@ -1,12 +1,10 @@
-FROM node:18-alpine
-
-RUN apk add --no-cache python3 make g++ gcc musl-dev
+FROM node:18
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN rm -rf package-lock.json node_modules && npm install
+RUN npm install
 
 COPY . .
 
