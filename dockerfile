@@ -1,14 +1,8 @@
-FROM node:18-alpine
-
-RUN apk add --no-cache python3 make g++ gcc musl-dev
-
-RUN npm install -g node-gyp
+FROM node:18
 
 WORKDIR /app
 
 COPY package*.json ./
-
-RUN rm -rf node_modules
 
 RUN npm install
 
