@@ -2,6 +2,7 @@ require("dotenv").config();
 const pool = require("../database/conection.js");
 const categoryMusic = require("../mock/category.json");
 const isLikeMusic = require("../mock/isLikeMusic.json");
+const server = process.env.SERVER;
 
 const path = require("path");
 const {
@@ -75,7 +76,7 @@ class ControllerAudio {
           .status(401)
           .json({ message: "Token inválido o userId no encontrado" });
       }
-
+      const baseUrl = server;
       const { artist, album, genre } = req.body;
       const audioFile = req.files["audioFile"][0];
       const coverImage = req.files["coverImage"][0];
@@ -91,12 +92,17 @@ class ControllerAudio {
       const audioFinalPath = path.join("./uploads", audioFinalName);
       renameFile(audioOriginalPath, audioFinalPath);
 
-      const qrData = `MUSIC_${nameMusic}_${Date.now()}`;
+      const qrData = JSON.stringify({
+        name: nameMusic,
+        artist,
+        album,
+        createdBy,
+        audioFile: `${baseUrl}/uploads/${audioFinalName}.mp3`,
+      });
       const qrImageName = `qr_${Date.now()}`;
       const qrImagePath = path.join("./uploads", qrImageName);
       await generateQR(qrImagePath, qrData);
 
-      const baseUrl = "http://localhost:3000";
       const coverImageUrl = `${baseUrl}/uploads/${optimizedImageName}.jpg`;
       const audioFileUrl = `${baseUrl}/uploads/${audioFinalName}.mp3`;
       const qrImageUrl = `${baseUrl}/uploads/${qrImageName}.png`;

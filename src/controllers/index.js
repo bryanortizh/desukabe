@@ -212,6 +212,36 @@ class Controller {
     }
   }
 
+  async profileUser(req, res) {
+    const { userId } = req.body;
+    if (!userId) {
+      return res.status(400).json({ message: "El userId es requerido" });
+    }
+
+    try {
+      const [rows] = await pool.execute("SELECT * FROM user WHERE id = ?", [
+        userId,
+      ]);
+      if (rows.length === 0) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+      const user = rows[0];
+      res.status(200).json({
+        message: "Perfil obtenido exitosamente",
+        user: {
+          id: user.id,
+          nickname: user.nickname,
+          email: user.email,
+          avatar: user.avatar,
+          type_user: user.type_user,
+          created: user.created,
+          updated: user.updated,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error al obtener perfil", error });
+    }
+  }
 }
 
 module.exports = { Controller };

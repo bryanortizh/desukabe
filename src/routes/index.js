@@ -1,10 +1,18 @@
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../contract/apiDesuka");
 const authenticateToken = require("../function/validateJWT");
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 const { Controller } = require("../controllers/index");
 const { ControllerAudio } = require("../controllers/audio");
+const {
+  createConversation,
+  getUserConversations,
+  getMessages,
+  sendMessage,
+} = require("../controllers/conversation");
+const { searchGeneral } = require("../controllers/searchAll");
+const { followUser, unfollowUser, getFollowers, getFollowing, isFollowing } = require("../controllers/follow");
 const controller = new Controller();
 const controllerAudio = new ControllerAudio();
 
@@ -92,38 +100,6 @@ function setRoutes(app) {
 
   /**
    * @swagger
-   * /ux-mobile/desuka/categoryMusic:
-   *   get:
-   *     summary: Obtiene la lista de música general de todas las musicas registradas
-   *     responses:
-   *      200:
-   *         description: Lista de canciones
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: array
-   *               items:
-   *                 type: object
-   *                 properties:
-   *                   id:
-   *                     type: integer
-   *                   name:
-   *                     type: string
-   *                   description:
-   *                     type: string
-   *                   image:
-   *                    type: string
-   *                   audioFiles:
-   *                    type: array
-   */
-  app.get(
-    "/ux-mobile/desuka/categoryMusic",
-    authenticateToken,
-    controllerAudio.getCategoryMusic
-  );
-
-  /**
-   * @swagger
    * /ux-mobile/desuka/musicLike/:id:
    *   put:
    *     summary: Obtiene la musica registrada y verifica si contiene un like y lo actualiza
@@ -152,6 +128,38 @@ function setRoutes(app) {
     "/ux-mobile/desuka/musicLike/:idMusic",
     authenticateToken,
     controllerAudio.changeMusicLike
+  );
+
+  /**
+   * @swagger
+   * /ux-mobile/desuka/categoryMusic:
+   *   get:
+   *     summary: Obtiene la lista de música general de todas las musicas registradas
+   *     responses:
+   *      200:
+   *         description: Lista de canciones
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 type: object
+   *                 properties:
+   *                   id:
+   *                     type: integer
+   *                   name:
+   *                     type: string
+   *                   description:
+   *                     type: string
+   *                   image:
+   *                    type: string
+   *                   audioFiles:
+   *                    type: array
+   */
+  app.get(
+    "/ux-mobile/desuka/categoryMusic",
+    authenticateToken,
+    controllerAudio.getCategoryMusic
   );
 
   /**
@@ -187,6 +195,14 @@ function setRoutes(app) {
     "/ux-mobile/desuka/logout",
     authenticateToken,
     controller.logoutUser
+  );
+
+  app.post("/ux-mobile/desuka/search", authenticateToken, searchGeneral);
+
+  app.post(
+    "/ux-mobile/desuka/profile",
+    authenticateToken,
+    controller.profileUser
   );
 
   /**
@@ -247,6 +263,40 @@ function setRoutes(app) {
     authenticateToken,
     controllerAudio.uploadMusic
   );
+
+  app.post(
+    "/ux-mobile/desuka/conversations",
+    authenticateToken,
+    createConversation
+  );
+
+  app.get(
+    "/ux-mobile/desuka/conversations/:userId",
+    authenticateToken,
+    getUserConversations
+  );
+
+  app.get(
+    "/ux-mobile/desuka/messages/:conversationId",
+    authenticateToken,
+    getMessages
+  );
+
+  app.post("/ux-mobile/desuka/messages", authenticateToken, sendMessage);
+
+  app.post("/ux-mobile/desuka/follow", authenticateToken, followUser);
+  app.post("/ux-mobile/desuka/unfollow", authenticateToken, unfollowUser);
+  app.get(
+    "/ux-mobile/desuka/followers/:userId",
+    authenticateToken,
+    getFollowers
+  );
+  app.get(
+    "/ux-mobile/desuka/following/:userId",
+    authenticateToken,
+    getFollowing
+  );
+  app.get("/ux-mobile/desuka/is-following/:followed_id", authenticateToken, isFollowing);
 }
 
 module.exports = setRoutes;
