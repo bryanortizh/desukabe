@@ -2,7 +2,8 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../contract/apiDesuka");
 const authenticateToken = require("../function/validateJWT");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 const { Controller } = require("../controllers/index");
 const { ControllerAudio } = require("../controllers/audio");
 const {
@@ -12,7 +13,14 @@ const {
   sendMessage,
 } = require("../controllers/conversation");
 const { searchGeneral } = require("../controllers/searchAll");
-const { followUser, unfollowUser, getFollowers, getFollowing, isFollowing } = require("../controllers/follow");
+const controllerCategory = require("../controllers/categoryMusic");
+const {
+  followUser,
+  unfollowUser,
+  getFollowers,
+  getFollowing,
+  isFollowing,
+} = require("../controllers/follow");
 const controller = new Controller();
 const controllerAudio = new ControllerAudio();
 
@@ -64,6 +72,12 @@ function setRoutes(app) {
     "/ux-mobile/desuka/music",
     authenticateToken,
     controllerAudio.getMusic
+  );
+
+  app.get(
+    "/ux-mobile/desuka/music/:id",
+    authenticateToken,
+    controllerAudio.getMusicById
   );
 
   /**
@@ -159,7 +173,14 @@ function setRoutes(app) {
   app.get(
     "/ux-mobile/desuka/categoryMusic",
     authenticateToken,
-    controllerAudio.getCategoryMusic
+    controllerCategory.getCategoryMusic  
+  );
+
+  app.post(
+    "/ux-mobile/desuka/category/create",
+    authenticateToken,
+    upload.single("image"),
+    controllerCategory.createCategory
   );
 
   /**
@@ -296,7 +317,11 @@ function setRoutes(app) {
     authenticateToken,
     getFollowing
   );
-  app.get("/ux-mobile/desuka/is-following/:followed_id", authenticateToken, isFollowing);
+  app.get(
+    "/ux-mobile/desuka/is-following/:followed_id",
+    authenticateToken,
+    isFollowing
+  );
 }
 
 module.exports = setRoutes;
