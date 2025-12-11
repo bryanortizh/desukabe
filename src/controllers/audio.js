@@ -25,6 +25,27 @@ class ControllerAudio {
     }
   }
 
+  async getMusicById(req, res) {
+    const id = req.params.id;
+    try {
+      const [rows] = await pool.execute("SELECT * FROM music WHERE id = ?", [
+        id,
+      ]);
+      if (rows.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Música no encontrada con el ID proporcionado" });
+      }
+      res.status(200).json(rows[0]);
+    } catch (error) {
+      return res.status(500).json({
+        message: "Error al obtener la música por ID",
+        error: error.message,
+        errorCode: "UNKREG02",
+      });
+    }
+  }
+
   getMusicLike(req, res) {
     const id = req.params.idMusic;
     const musicLike = isLikeMusic;
@@ -62,11 +83,7 @@ class ControllerAudio {
     }
   }
 
-  getCategoryMusic(req, res) {
-    res.status(200).json(categoryMusic);
-  }
-
- async uploadMusic(req, res) {
+  async uploadMusic(req, res) {
     try {
       const createdBy = req.user && req.user.userId ? req.user.userId : null;
       if (!createdBy) {
@@ -75,17 +92,37 @@ class ControllerAudio {
           .json({ message: "Token inválido o userId no encontrado" });
       }
 
+      // validar archivos en memoria
+      if (!req.files || !req.files.audioFile || !req.files.coverImage) {
+        return res
+          .status(400)
+          .json({ message: "Faltan archivos: audioFile y/o coverImage" });
+      }
+
       const { artist, album, genre } = req.body;
       const audioFile = req.files["audioFile"][0];
       const coverImage = req.files["coverImage"][0];
 
-      const duration = await getAudioDuration(audioFile.path);
+      if (
+        !audioFile ||
+        !audioFile.buffer ||
+        !coverImage ||
+        !coverImage.buffer
+      ) {
+        return res.status(400).json({ message: "Archivos inválidos" });
+      }
 
-      // 2) Subir audio a Cloudinary
-      const audioUploadRes = await uploadFileToCloudinary(audioFile.path, "desuka/audios", "auto");
+      const duration = await getAudioDuration(audioFile.buffer);
+
+      const audioUploadRes = await uploadBufferToCloudinary(
+        audioFile.buffer,
+        `audio_${Date.now()}`,
+        "desuka/audios",
+        "auto"
+      );
       const audioFileUrl = audioUploadRes.secure_url;
 
-      const optimizedCoverBuffer = await optimizeImage(coverImage.path);
+      const optimizedCoverBuffer = await optimizeImage(coverImage.buffer);
       const coverUploadRes = await uploadBufferToCloudinary(
         optimizedCoverBuffer,
         `cover_${Date.now()}`,
@@ -94,7 +131,10 @@ class ControllerAudio {
       );
       const coverImageUrl = coverUploadRes.secure_url;
 
-      const nameMusic = audioFile.originalname.split(".").slice(0, -1).join(".");
+      const nameMusic = audioFile.originalname
+        .split(".")
+        .slice(0, -1)
+        .join(".");
       const qrData = JSON.stringify({
         name: nameMusic,
         artist,
@@ -103,14 +143,14 @@ class ControllerAudio {
         audioFile: audioFileUrl,
       });
       const qrBuffer = await generateQRBuffer(qrData);
-      const qrUploadRes = await uploadBufferToCloudinary(qrBuffer, `qr_${Date.now()}`, "desuka/qrs", "image");
+      const qrUploadRes = await uploadBufferToCloudinary(
+        qrBuffer,
+        `qr_${Date.now()}`,
+        "desuka/qrs",
+        "image"
+      );
       const qrImageUrl = qrUploadRes.secure_url;
 
-      // 5) Eliminar archivos temporales locales
-      deleteFile(audioFile.path);
-      deleteFile(coverImage.path);
-
-      // 6) Guardar en DB
       const [result] = await pool.execute(
         `INSERT INTO music (title, artist, album, duration, genre, coverImage, audioFile, qrImage, createdBy)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,

@@ -12,23 +12,18 @@ cloudinary.config({
   secure: true,
 });
 
-async function optimizeImage(inputPath) {
-  return sharp(inputPath).jpeg({ quality: 80 }).toBuffer();
+async function optimizeImage(input) {
+  if (Buffer.isBuffer(input)) {
+    return sharp(input).jpeg({ quality: 80 }).toBuffer();
+  }
+  return sharp(input).jpeg({ quality: 80 }).toBuffer();
 }
 
 async function generateQRBuffer(data) {
   return QRCode.toBuffer(data);
 }
 
-async function uploadFileToCloudinary(filePath, folder = "desuka", resource_type = "auto") {
-  const res = await cloudinary.uploader.upload(filePath, {
-    folder,
-    resource_type,
-  });
-  return res;
-}
-
-async function uploadBufferToCloudinary(buffer, filename = `file_${Date.now()}`, folder = "desuka", resource_type = "image") {
+async function uploadBufferToCloudinary(buffer, filename = `file_${Date.now()}`, folder = "desuka", resource_type = "auto") {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       { folder, public_id: filename, resource_type },
@@ -41,11 +36,24 @@ async function uploadBufferToCloudinary(buffer, filename = `file_${Date.now()}`,
   });
 }
 
-async function getAudioDuration(audioPath) {
+async function uploadFileToCloudinary(filePath, folder = "desuka", resource_type = "auto") {
+  const res = await cloudinary.uploader.upload(filePath, {
+    folder,
+    resource_type,
+  });
+  return res;
+}
+
+async function getAudioDuration(input) {
   try {
     const mm = await import("music-metadata");
-    const metadata = await mm.parseFile(audioPath);
-    return metadata.format.duration || 0;
+    if (Buffer.isBuffer(input)) {
+      const metadata = await mm.parseBuffer(input, null, { duration: true });
+      return metadata.format.duration || 0;
+    } else {
+      const metadata = await mm.parseFile(input);
+      return metadata.format.duration || 0;
+    }
   } catch (err) {
     console.error("Error getAudioDuration:", err);
     return 0;
@@ -60,20 +68,11 @@ function deleteFile(filePath) {
   }
 }
 
-function renameFile(oldPath, newPath) {
-  try {
-    fs.renameSync(oldPath, newPath);
-  } catch (err) {
-    console.error("renameFile error:", err);
-  }
-}
-
 module.exports = {
   optimizeImage,
   generateQRBuffer,
-  uploadFileToCloudinary,
   uploadBufferToCloudinary,
+  uploadFileToCloudinary,
   getAudioDuration,
   deleteFile,
-  renameFile,
 };
