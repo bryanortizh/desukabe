@@ -47,7 +47,8 @@ exports.getUserConversations = async (req, res) => {
   const { userId } = req.params;
   try {
     const [rows] = await db.query(
-      `SELECT 
+      `
+      SELECT 
         c.id AS conversationId,
         c.is_group,
         c.title,
@@ -55,14 +56,25 @@ exports.getUserConversations = async (req, res) => {
         m.id AS messageId,
         m.content,
         m.created_at,
-        -- Nickname y avatar: para grupo, del último que habló; para 1 a 1, del otro usuario
-        CASE 
-          WHEN c.is_group = 1 THEN u.nickname
-          ELSE u2.nickname
+        CASE
+          WHEN c.is_group = 1 THEN (SELECT u.nickname FROM user u WHERE u.id = m.user_id)
+          ELSE (
+            SELECT u2.nickname
+            FROM conversation_members cm2
+            JOIN user u2 ON u2.id = cm2.user_id
+            WHERE cm2.conversation_id = c.id AND cm2.user_id != ?
+            LIMIT 1
+          )
         END AS nickname,
-        CASE 
-          WHEN c.is_group = 1 THEN u.avatar
-          ELSE u2.avatar
+        CASE
+          WHEN c.is_group = 1 THEN (SELECT u.avatar FROM user u WHERE u.id = m.user_id)
+          ELSE (
+            SELECT u2.avatar
+            FROM conversation_members cm2
+            JOIN user u2 ON u2.id = cm2.user_id
+            WHERE cm2.conversation_id = c.id AND cm2.user_id != ?
+            LIMIT 1
+          )
         END AS avatar
       FROM conversations c
       JOIN conversation_members cm ON c.id = cm.conversation_id
@@ -75,18 +87,12 @@ exports.getUserConversations = async (req, res) => {
           GROUP BY conversation_id
         ) latest ON m1.conversation_id = latest.conversation_id AND m1.created_at = latest.max_created
       ) m ON c.id = m.conversation_id
-      LEFT JOIN user u ON m.user_id = u.id -- usuario que envió el último mensaje
-      LEFT JOIN (
-        SELECT cm2.conversation_id, u2.id, u2.nickname, u2.avatar
-        FROM conversation_members cm2
-        JOIN user u2 ON u2.id = cm2.user_id
-        WHERE cm2.user_id != ?
-      ) u2 ON u2.conversation_id = c.id
       WHERE cm.user_id = ?
-      GROUP BY c.id
-      ORDER BY m.created_at DESC`,
-      [userId, userId]
+      ORDER BY m.created_at DESC
+      `,
+      [userId, userId, userId]
     );
+
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
