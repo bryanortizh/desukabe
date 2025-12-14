@@ -41,12 +41,12 @@ class Controller {
           now,
         ]
       );
-      const userIdCreate = result.insertId;
-      const token = jwt.sign({ userIdCreate, nickname, email }, JWT_SECRET);
+      const userId = result.insertId;
+      const token = jwt.sign({ userId, nickname, email }, JWT_SECRET);
       const status = "active";
       await pool.execute(
         "INSERT INTO token (token, userId, status) VALUES (?, ?, ?)",
-        [token, userIdCreate, status]
+        [token, userId, status]
       );
 
       res.status(201).json({
